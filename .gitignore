@@ -1,0 +1,10 @@
+## Ignore Visual Studio, .NET Core, and temporary build files
+bin/
+obj/
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+appsettings.Development.json
