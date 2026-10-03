@@ -2,6 +2,7 @@ using Hangfire;
 using HMS.Api.Authorization;
 using HMS.Api.Middleware;
 using HMS.Infrastructure;
+using HMS.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -69,6 +70,13 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+// Run Database Seeder for Super Admin & Initial Sample Data
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<HmsDbContext>();
+    await DatabaseSeeder.SeedAsync(dbContext);
+}
+
 // Middleware Pipeline (Security Headers -> Correlation ID -> Global Exceptions)
 app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseMiddleware<CorrelationIdMiddleware>();
@@ -94,4 +102,3 @@ app.MapControllers();
 app.Run();
 
 public partial class Program { }
-
