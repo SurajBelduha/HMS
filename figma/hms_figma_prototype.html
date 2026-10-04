@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HMS HealthCore — Figma UI Prototype & Design System</title>
+  <!-- Tailwind CSS via allowlisted CDN -->
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .tab-active {
+      background-color: #0d9488 !important;
+      color: #ffffff !important;
+    }
+    .nav-active {
+      background-color: #f0fdfa !important;
+      color: #0f766e !important;
+      border-right: 3px solid #0d9488;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-teal-100 selection:text-teal-900">
+
+  <!-- ============================================================== -->
+  <!-- TOP NAVIGATION BAR -->
+  <!-- ============================================================== -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+    <div class="px-5 py-3 flex items-center justify-between gap-4">
+      
+      <!-- Brand & Hospital Selector -->
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-700 to-teal-500 flex items-center justify-center text-white shadow-md shadow-teal-500/20">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold text-slate-900 tracking-tight text-base">HealthCore</span>
+              <span class="px-1.5 py-0.5 text-xs font-semibold bg-teal-100 text-teal-800 rounded">HMS</span>
+            </div>
+            <p class="text-xs text-slate-500">Enterprise Healthcare SaaS</p>
+          </div>
+        </div>
+
+        <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
+
+        <!-- Tenant & Branch Selectors -->
+        <div class="hidden md:flex items-center gap-2">
+          <div class="flex items-center gap-1.5 bg-slate-100/80 px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs">
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+            <span class="text-slate-500">Tenant:</span>
+            <select id="tenantSelect" onchange="switchTenant(this.value)" class="bg-transparent font-medium text-slate-700 focus:outline-hidden cursor-pointer">
+              <option value="ABC-HC">ABC Healthcare Ltd</option>
+              <option value="CITY-CARE">City Care Hospital</option>
+              <option value="PLATFORM">Platform Host (SaaS)</option>
+            </select>
+          </div>
+
+          <div class="flex items-center gap-1.5 bg-slate-100/80 px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs">
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <span class="text-slate-500">Branch:</span>
+            <select id="branchSelect" class="bg-transparent font-medium text-slate-700 focus:outline-hidden cursor-pointer">
+              <option value="JPR-01">Jaipur Main (JPR-01)</option>
+              <option value="DEL-01">Delhi CP (DEL-01)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Global Search -->
+      <div class="flex-1 max-w-md hidden lg:block">
+        <div class="relative">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          <input type="text" placeholder="Search patient by MRN, doctor, bed, invoice #... (Press /)" class="w-full pl-9 pr-12 py-1.5 bg-slate-100/90 border border-slate-200 rounded-lg text-xs placeholder-slate-400 focus:outline-hidden focus:bg-white focus:border-teal-500 focus:ring-2 focus:ring-teal-100 transition-all">
+          <kbd class="absolute right-2.5 top-2 text-[10px] uppercase font-mono px-1.5 py-0.5 bg-slate-200/80 text-slate-500 rounded">⌘K</kbd>
+        </div>
+      </div>
+
+      <!-- Action Buttons & Role Switcher -->
+      <div class="flex items-center gap-2.5">
+        
+        <!-- Figma Design System & Tokens Trigger -->
+        <button onclick="openModal('figmaModal')" class="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg text-xs font-semibold shadow-xs transition">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 2h4a4 4 0 0 1 4 4v4H8a4 4 0 0 1 0-8zm0 8h8a4 4 0 0 1 0 8H8a4 4 0 0 1 0-8zm0 8h4a4 4 0 1 1-4 4v-4zM16 6a4 4 0 0 1 4 4v4h-4V6z"/>
+          </svg>
+          <span>Figma Tokens & Spec</span>
+        </button>
+
+        <!-- Quick Action Button -->
+        <div class="relative">
+          <button onclick="toggleQuickMenu()" class="flex items-center gap-1.5 px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold shadow-xs transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+            <span>+ Quick Action</span>
+          </button>
+          <div id="quickMenu" class="hidden absolute right-0 mt-1.5 w-48 bg-white border border-slate-200 rounded-xl shadow-xl py-1 text-xs z-50">
+            <button onclick="openModal('patientModal'); toggleQuickMenu()" class="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700">
+              <span class="w-2 h-2 rounded-full bg-teal-500"></span> Register New Patient
+            </button>
+            <button onclick="openModal('appointmentModal'); toggleQuickMenu()" class="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700">
+              <span class="w-2 h-2 rounded-full bg-blue-500"></span> Book Appointment
+            </button>
+            <button onclick="openModal('admissionModal'); toggleQuickMenu()" class="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700">
+              <span class="w-2 h-2 rounded-full bg-indigo-500"></span> Admit to IPD Bed
+            </button>
+            <button onclick="openModal('invoiceModal'); toggleQuickMenu()" class="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Generate Bill / Invoice
+            </button>
+          </div>
+        </div>
+
+        <!-- Role Simulator -->
+        <div class="hidden xl:flex items-center gap-1.5 bg-slate-100 px-2 py-1 rounded-lg border border-slate-200 text-xs">
+          <span class="text-slate-400">Role:</span>
+          <select id="roleSelect" class="bg-transparent font-medium text-slate-700 focus:outline-hidden cursor-pointer">
+            <option value="Admin">Hospital Admin</option>
+            <option value="Doctor">Doctor (Dr. Alice)</option>
+            <option value="Nurse">Staff Nurse</option>
+            <option value="Receptionist">Receptionist</option>
+            <option value="Pharmacist">Pharmacist</option>
+            <option value="Accountant">Accountant</option>
+            <option value="SuperAdmin">Platform SuperAdmin</option>
+          </select>
+        </div>
+
+        <!-- User Profile Pill -->
+        <div class="flex items-center gap-2 pl-2 border-l border-slate-200">
+          <div class="w-8 h-8 rounded-full bg-teal-100 border border-teal-200 text-teal-800 flex items-center justify-center font-bold text-xs">
+            AS
+          </div>
+          <div class="hidden 2xl:block text-left">
+            <div class="text-xs font-semibold text-slate-800 leading-tight">Dr. Alice Smith</div>
+            <div class="text-[11px] text-slate-400">Chief Cardiologist</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================== -->
+  <!-- MAIN LAYOUT: SIDEBAR + CONTENT AREA -->
+  <!-- ============================================================== -->
+  <div class="flex-1 flex overflow-hidden">
+    
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0 select-none">
+      <div class="p-3">
+        <div class="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Clinical & Operations</div>
+        <nav class="space-y-0.5 mt-1" id="mainNav">
+          
+          <button onclick="switchScreen('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition nav-active">
+            <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+            <span>Operations Dashboard</span>
+          </button>
+
+          <button onclick="switchScreen('patients')" id="nav-patients" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 transition">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            <span>Patients & EMR</span>
+            <span class="ml-auto bg-slate-100 text-slate-600 text-[11px] px-1.5 py-0.5 rounded font-mono">1,248</span>
+          </button>
+
+          <button onclick="switchScreen('appointments')" id="nav-appointments" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 transition">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            <span>Doctor Appointments</span>
+            <span class="ml-auto bg-teal-50 text-teal-700 text-[11px] px-1.5 py-0.5 rounded font-semibold">48 Today</span>
+          </button>
+
+          <button onclick="switchScreen('clinical')" id="nav-clinical" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 transition">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <span>OPD Desk & e-Rx</span>
+            <span class="ml-auto w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          </button>
+
+          <button onclick="switchScreen('ipd')" id="nav-ipd" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 transition">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            <span>IPD Wards & Beds</span>
+            <span class="ml-auto bg-amber-50 text-amber-700 text-[11px] px-1.5 py-0.5 rounded font-mono">80% Full</span>
+          </button>
+
+        </nav>
+
+        <div class="px-3 pt-4 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Hospital Services</div>
+        <nav class="space-y-0.5">
+          
+          <button onclick="switchScreen('pharmacy')" id="nav-pharmacy" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 transition">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+            <span>Pharmacy & Stock</span>
+            <span class="ml-auto bg-rose-50 text-rose-600 text-[11px] px-1.5 py-0.5 rounded font-semibold">2 Low</span>
+          </button>
+
+          <button onclick="switchScreen('laboratory')" id="nav-laboratory" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 transition">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+            <span>Lab & Diagnostics</span>
+            <span class="ml-auto bg-slate-100 text-slate-600 text-[11px] px-1.5 py-0.5 rounded font-mono">14 Pending</span>
+          </button>
+
+          <button onclick="switchScreen('billing')" id="nav-billing" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 transition">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            <span>Billing & Invoices</span>
+          </button>
+
+        </nav>
+
+        <div class="px-3 pt-4 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Administration</div>
+        <nav class="space-y-0.5">
+          <button onclick="switchScreen('branches')" id="nav-branches" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 transition">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+            <span>Branches & Doctors</span>
+          </button>
+
+          <button onclick="switchScreen('settings')" id="nav-settings" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 transition">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <span>Tenant Settings & RBAC</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Quick System Status Badge -->
+      <div class="mt-auto p-4 border-t border-slate-200 bg-slate-50/50">
+        <div class="flex items-center justify-between text-[11px] mb-1.5">
+          <span class="text-slate-500 font-medium">Tenant Isolation</span>
+          <span class="font-mono text-teal-700 bg-teal-100 px-1.5 py-0.5 rounded font-semibold">Shared DB</span>
+        </div>
+        <div class="flex items-center justify-between text-[11px]">
+          <span class="text-slate-500">API Health (.NET 8)</span>
+          <span class="flex items-center gap-1 text-emerald-600 font-medium">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Online
+          </span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTENT VIEWPORT -->
+    <main class="flex-1 overflow-y-auto p-6 bg-slate-50/60" id="mainContent">
+
+      <!-- ========================================================== -->
+      <!-- 01. OPERATIONS DASHBOARD -->
+      <!-- ========================================================== -->
+      <section id="screen-dashboard" class="space-y-6">
+        
+        <!-- Welcome & Breadcrumbs -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight">Executive Hospital Operations</h1>
+            <p class="text-xs text-slate-500">Live operational feed for <span class="font-semibold text-slate-700">ABC Healthcare — Jaipur Branch</span> • Sunday, Oct 4, 2026</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Real-time Sync Active
+            </span>
+          </div>
+        </div>
+
+        <!-- 4 Key Metrics Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-teal-300 transition">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-medium text-slate-500">Today's Appointments</span>
+              <span class="p-2 rounded-lg bg-teal-50 text-teal-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              </span>
+            </div>
+            <div class="mt-2 flex items-baseline gap-2">
+              <span class="text-2xl font-bold text-slate-900">48</span>
+              <span class="text-xs font-semibold text-emerald-600">+12% vs avg</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">28 Completed • 12 In-Queue • 8 Upcoming</p>
+          </div>
+
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-blue-300 transition">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-medium text-slate-500">Inpatient Bed Occupancy</span>
+              <span class="p-2 rounded-lg bg-blue-50 text-blue-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+              </span>
+            </div>
+            <div class="mt-2 flex items-baseline gap-2">
+              <span class="text-2xl font-bold text-slate-900">32 / 40</span>
+              <span class="text-xs font-semibold text-blue-600 font-mono">80.0%</span>
+            </div>
+            <!-- Progress bar -->
+            <div class="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
+              <div class="bg-blue-600 h-1.5 rounded-full" style="width: 80%"></div>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">ICU: 5/6 Occupied • General: 18/20</p>
+          </div>
+
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-emerald-300 transition">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-medium text-slate-500">Revenue Collected (Today)</span>
+              <span class="p-2 rounded-lg bg-emerald-50 text-emerald-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </span>
+            </div>
+            <div class="mt-2 flex items-baseline gap-2">
+              <span class="text-2xl font-bold text-slate-900">$14,850</span>
+              <span class="text-xs font-semibold text-emerald-600">+8.4%</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">OPD: $4,200 • IPD: $8,650 • Pharmacy: $2,000</p>
+          </div>
+
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-purple-300 transition">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-medium text-slate-500">Diagnostic Orders</span>
+              <span class="p-2 rounded-lg bg-purple-50 text-purple-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+              </span>
+            </div>
+            <div class="mt-2 flex items-baseline gap-2">
+              <span class="text-2xl font-bold text-slate-900">14 Orders</span>
+              <span class="text-xs font-semibold text-amber-600">4 Urgent STAT</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">8 Sample Collected • 6 In Processing</p>
+          </div>
+
+        </div>
+
+        <!-- Middle Grid: OPD Live Queue & IPD Bed Snapshot -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Live OPD Queue (2 Cols) -->
+          <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-xs p-5">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div>
+                <h2 class="text-sm font-semibold text-slate-900">Today's Live OPD Queue (Cardiology & General)</h2>
+                <p class="text-xs text-slate-500">Live doctor consulting desk tokens</p>
+              </div>
+              <button onclick="switchScreen('appointments')" class="text-xs font-semibold text-teal-600 hover:text-teal-700">View Full Schedule &rarr;</button>
+            </div>
+
+            <div class="divide-y divide-slate-100 mt-2">
+              
+              <!-- Token 1 -->
+              <div class="py-3 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-lg bg-teal-600 text-white font-bold text-sm flex items-center justify-center font-mono">
+                    #01
+                  </div>
+                  <div>
+                    <div class="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                      <span>John Doe</span>
+                      <span class="text-[11px] font-mono px-1.5 py-0.2 bg-slate-100 text-slate-600 rounded">PAT-2026-00001</span>
+                    </div>
+                    <div class="text-[11px] text-slate-500">Dr. Alice Smith • Cardiology • 09:00 - 09:15 AM</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 text-xs font-medium bg-emerald-100 text-emerald-800 rounded-full flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> In Consultation
+                  </span>
+                  <button onclick="switchScreen('clinical')" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium">Open Desk</button>
+                </div>
+              </div>
+
+              <!-- Token 2 -->
+              <div class="py-3 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-lg bg-amber-500 text-white font-bold text-sm flex items-center justify-center font-mono">
+                    #02
+                  </div>
+                  <div>
+                    <div class="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                      <span>Jane Smith</span>
+                      <span class="text-[11px] font-mono px-1.5 py-0.2 bg-slate-100 text-slate-600 rounded">PAT-2026-00002</span>
+                    </div>
+                    <div class="text-[11px] text-slate-500">Dr. Alice Smith • Cardiology • 09:15 - 09:30 AM</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full">Waiting (Vitals Done)</span>
+                  <button onclick="alert('Calling Jane Smith into Room 101')" class="px-2.5 py-1 text-xs bg-teal-50 hover:bg-teal-100 text-teal-700 rounded-md font-medium">Call Next</button>
+                </div>
+              </div>
+
+              <!-- Token 3 -->
+              <div class="py-3 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-lg bg-slate-200 text-slate-700 font-bold text-sm flex items-center justify-center font-mono">
+                    #03
+                  </div>
+                  <div>
+                    <div class="text-xs font-semibold text-slate-900 flex items-center gap-2">
+                      <span>Robert Brown</span>
+                      <span class="text-[11px] font-mono px-1.5 py-0.2 bg-slate-100 text-slate-600 rounded">PAT-2026-00003</span>
+                    </div>
+                    <div class="text-[11px] text-slate-500">Dr. Robert Brown • Neurology • 10:00 - 10:15 AM</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 text-xs font-medium bg-slate-100 text-slate-600 rounded-full">Scheduled</span>
+                  <button onclick="alert('Patient checked in')" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md font-medium">Check-In</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Ward Bed Occupancy Breakdown -->
+          <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-5 flex flex-col">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div>
+                <h2 class="text-sm font-semibold text-slate-900">Bed Allocation Matrix</h2>
+                <p class="text-xs text-slate-500">Current Inpatient Census</p>
+              </div>
+              <button onclick="switchScreen('ipd')" class="text-xs font-semibold text-teal-600 hover:text-teal-700">Open Matrix &rarr;</button>
+            </div>
+
+            <div class="mt-4 space-y-4 flex-1">
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="font-medium text-slate-700">General Ward 1 (Floor 1)</span>
+                  <span class="font-mono text-slate-500">18 / 20 Beds (90%)</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                  <div class="bg-teal-600 h-2 rounded-full" style="width: 90%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="font-medium text-slate-700">ICU Ward 1 (Floor 2)</span>
+                  <span class="font-mono text-amber-600 font-semibold">5 / 6 Beds (83%)</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                  <div class="bg-amber-500 h-2 rounded-full" style="width: 83%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="font-medium text-slate-700">Private Deluxe Suites</span>
+                  <span class="font-mono text-slate-500">9 / 14 Beds (64%)</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                  <div class="bg-indigo-600 h-2 rounded-full" style="width: 64%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> 8 Available</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> 32 Occupied</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> 2 Cleaning</span>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- 02. PATIENT DIRECTORY & EMR -->
+      <!-- ========================================================== -->
+      <section id="screen-patients" class="hidden space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight">Patient Directory & Electronic Medical Records</h1>
+            <p class="text-xs text-slate-500">Comprehensive patient registry, visit history, diagnoses, and medical charts.</p>
+          </div>
+          <button onclick="openModal('patientModal')" class="flex items-center gap-2 px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold shadow-xs transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+            <span>+ Register New Patient</span>
+          </button>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2 flex-1 min-w-[280px]">
+            <input type="text" id="patientSearchInput" placeholder="Filter by Name, MRN (PAT-2026-...), Phone..." class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:bg-white focus:outline-hidden focus:border-teal-500">
+          </div>
+          <div class="flex items-center gap-2">
+            <select class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-600">
+              <option>All Genders</option>
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+            <select class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-600">
+              <option>Blood: All</option>
+              <option>O+</option>
+              <option>A+</option>
+              <option>B+</option>
+              <option>AB+</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Patients Data Table -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50/80 text-slate-500 font-semibold border-b border-slate-200 uppercase tracking-wider text-[11px]">
+                <tr>
+                  <th class="px-4 py-3">Patient MRN</th>
+                  <th class="px-4 py-3">Full Name & Demographics</th>
+                  <th class="px-4 py-3">Phone & Email</th>
+                  <th class="px-4 py-3">Blood Group</th>
+                  <th class="px-4 py-3">Last Visit</th>
+                  <th class="px-4 py-3">Status</th>
+                  <th class="px-4 py-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100" id="patientTableBody">
+                
+                <tr class="hover:bg-slate-50/80 transition">
+                  <td class="px-4 py-3 font-mono font-semibold text-teal-700">PAT-2026-00001</td>
+                  <td class="px-4 py-3">
+                    <div class="font-semibold text-slate-900">John Doe</div>
+                    <div class="text-[11px] text-slate-400">36 Yrs • Male • DOB: 01/01/1990</div>
+                  </td>
+                  <td class="px-4 py-3 text-slate-600">
+                    <div>+91 98765 43210</div>
+                    <div class="text-[11px] text-slate-400">john@example.com</div>
+                  </td>
+                  <td class="px-4 py-3 font-medium"><span class="px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md font-bold text-xs">O+</span></td>
+                  <td class="px-4 py-3 text-slate-500">Today, 09:00 AM</td>
+                  <td class="px-4 py-3"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-medium text-[11px]">OPD In-Consult</span></td>
+                  <td class="px-4 py-3 text-right space-x-1.5">
+                    <button onclick="viewEMR('PAT-2026-00001', 'John Doe')" class="px-2.5 py-1 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded font-semibold text-xs">View EMR</button>
+                    <button onclick="openModal('appointmentModal')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-semibold text-xs">Book</button>
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-slate-50/80 transition">
+                  <td class="px-4 py-3 font-mono font-semibold text-teal-700">PAT-2026-00002</td>
+                  <td class="px-4 py-3">
+                    <div class="font-semibold text-slate-900">Jane Smith</div>
+                    <div class="text-[11px] text-slate-400">34 Yrs • Female • DOB: 02/02/1992</div>
+                  </td>
+                  <td class="px-4 py-3 text-slate-600">
+                    <div>+91 98765 43211</div>
+                    <div class="text-[11px] text-slate-400">jane@example.com</div>
+                  </td>
+                  <td class="px-4 py-3 font-medium"><span class="px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md font-bold text-xs">A+</span></td>
+                  <td class="px-4 py-3 text-slate-500">Today, 09:15 AM</td>
+                  <td class="px-4 py-3"><span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full font-medium text-[11px]">Waiting</span></td>
+                  <td class="px-4 py-3 text-right space-x-1.5">
+                    <button onclick="viewEMR('PAT-2026-00002', 'Jane Smith')" class="px-2.5 py-1 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded font-semibold text-xs">View EMR</button>
+                    <button onclick="openModal('appointmentModal')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-semibold text-xs">Book</button>
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-slate-50/80 transition">
+                  <td class="px-4 py-3 font-mono font-semibold text-teal-700">PAT-2026-00003</td>
+                  <td class="px-4 py-3">
+                    <div class="font-semibold text-slate-900">Robert Brown</div>
+                    <div class="text-[11px] text-slate-400">58 Yrs • Male • DOB: 14/06/1968</div>
+                  </td>
+                  <td class="px-4 py-3 text-slate-600">
+                    <div>+91 98111 22334</div>
+                    <div class="text-[11px] text-slate-400">robert.b@domain.com</div>
+                  </td>
+                  <td class="px-4 py-3 font-medium"><span class="px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md font-bold text-xs">B+</span></td>
+                  <td class="px-4 py-3 text-slate-500">02 Oct 2026</td>
+                  <td class="px-4 py-3"><span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full font-medium text-[11px]">Admitted (ICU-01)</span></td>
+                  <td class="px-4 py-3 text-right space-x-1.5">
+                    <button onclick="viewEMR('PAT-2026-00003', 'Robert Brown')" class="px-2.5 py-1 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded font-semibold text-xs">View EMR</button>
+                    <button onclick="switchScreen('ipd')" class="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded font-semibold text-xs">Bed</button>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- 03. APPOINTMENTS & DOCTOR SCHEDULING -->
+      <!-- ========================================================== -->
+      <section id="screen-appointments" class="hidden space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight">Doctor Appointments & Token Queue</h1>
+            <p class="text-xs text-slate-500">Time-slot allocation, token generation, and daily outpatient appointments.</p>
+          </div>
+          <button onclick="openModal('appointmentModal')" class="flex items-center gap-2 px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold shadow-xs transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>+ Book New Appointment</span>
+          </button>
+        </div>
+
+        <!-- Doctor & Date Navigator Strip -->
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-teal-100 text-teal-800 font-bold flex items-center justify-center text-xs">
+              AS
+            </div>
+            <div>
+              <div class="text-xs font-bold text-slate-900">Dr. Alice Smith (MD, Cardiology)</div>
+              <div class="text-[11px] text-slate-500">Shift: Mon - Fri (09:00 AM - 01:00 PM) • Max 20 Patients • Fee: $500</div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button class="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-600 text-xs">←</button>
+            <span class="px-3 py-1.5 bg-slate-100 font-semibold text-xs text-slate-800 rounded-lg">Today, 04 Oct 2026</span>
+            <button class="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-600 text-xs">→</button>
+          </div>
+        </div>
+
+        <!-- Token Queue Timeline -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+          <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-800">Token Slots (15 min intervals)</span>
+            <span class="text-xs text-slate-500">Booked: 2 / 20</span>
+          </div>
+
+          <div class="divide-y divide-slate-100 text-xs">
+            
+            <div class="p-4 flex items-center justify-between bg-teal-50/40">
+              <div class="flex items-center gap-4">
+                <span class="font-mono font-bold text-teal-800 bg-teal-200/60 px-2 py-1 rounded">Token #01</span>
+                <div>
+                  <span class="font-semibold text-slate-900">John Doe (PAT-2026-00001)</span>
+                  <div class="text-[11px] text-slate-500">09:00 AM - 09:15 AM • Reason: Chest Discomfort • Paid: $500</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-semibold text-[11px]">In-Progress</span>
+                <button onclick="switchScreen('clinical')" class="px-3 py-1 bg-teal-600 text-white rounded font-medium text-xs">Start Consult</button>
+              </div>
+            </div>
+
+            <div class="p-4 flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <span class="font-mono font-bold text-slate-700 bg-slate-100 px-2 py-1 rounded">Token #02</span>
+                <div>
+                  <span class="font-semibold text-slate-900">Jane Smith (PAT-2026-00002)</span>
+                  <div class="text-[11px] text-slate-500">09:15 AM - 09:30 AM • Reason: Routine ECG Review • Paid: $500</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded font-semibold text-[11px]">Checked-In</span>
+                <button onclick="alert('Reschedule modal')" class="px-3 py-1 bg-slate-100 text-slate-700 rounded font-medium text-xs hover:bg-slate-200">Reschedule</button>
+              </div>
+            </div>
+
+            <div class="p-4 flex items-center justify-between bg-slate-50/50">
+              <div class="flex items-center gap-4 text-slate-400">
+                <span class="font-mono font-bold bg-slate-200/50 px-2 py-1 rounded">Token #03</span>
+                <span>09:30 AM - 09:45 AM • Slot Available</span>
+              </div>
+              <button onclick="openModal('appointmentModal')" class="px-3 py-1 bg-teal-50 text-teal-700 hover:bg-teal-100 rounded font-semibold text-xs">+ Book Slot</button>
+            </div>
+
+            <div class="p-4 flex items-center justify-between bg-slate-50/50">
+              <div class="flex items-center gap-4 text-slate-400">
+                <span class="font-mono font-bold bg-slate-200/50 px-2 py-1 rounded">Token #04</span>
+                <span>09:45 AM - 10:00 AM • Slot Available</span>
+              </div>
+              <button onclick="openModal('appointmentModal')" class="px-3 py-1 bg-teal-50 text-teal-700 hover:bg-teal-100 rounded font-semibold text-xs">+ Book Slot</button>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- 04. CLINICAL OPD & E-PRESCRIPTION PAD -->
+      <!-- ========================================================== -->
+      <section id="screen-clinical" class="hidden space-y-6">
+        
+        <!-- Active Patient Context Strip -->
+        <div class="bg-gradient-to-r from-teal-800 to-slate-800 text-white p-4 rounded-xl shadow-md flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center font-bold text-lg">
+              JD
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-base font-bold">John Doe</h2>
+                <span class="font-mono text-xs px-2 py-0.5 bg-teal-500/30 border border-teal-400/30 rounded">PAT-2026-00001</span>
+                <span class="text-xs bg-rose-500/40 text-rose-200 px-2 py-0.5 rounded font-bold">Allergy: Penicillin</span>
+              </div>
+              <p class="text-xs text-teal-100/80 mt-0.5">36 Yrs, Male • O+ • Attending: Dr. Alice Smith (Cardiology)</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 text-xs">
+            <div>BP: <strong class="text-teal-300">120/80</strong></div>
+            <div class="w-px h-3 bg-white/20"></div>
+            <div>Pulse: <strong class="text-teal-300">72 bpm</strong></div>
+            <div class="w-px h-3 bg-white/20"></div>
+            <div>Temp: <strong class="text-teal-300">98.6 °F</strong></div>
+            <div class="w-px h-3 bg-white/20"></div>
+            <div>SpO2: <strong class="text-teal-300">99%</strong></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Clinical Notes & Diagnoses (2 Cols) -->
+          <div class="lg:col-span-2 space-y-4">
+            
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-3">
+              <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Chief Complaints & Clinical Findings</h3>
+              <div>
+                <textarea rows="3" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:bg-white focus:outline-hidden focus:border-teal-500" placeholder="Patient reports intermittent retrosternal chest pain with mild exertion since 3 days...">Patient reports intermittent retrosternal chest discomfort radiating to left shoulder on exertion. No associated syncope or dyspnea.</textarea>
+              </div>
+
+              <!-- ICD-10 Diagnoses -->
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="text-xs font-semibold text-slate-700">ICD-10 Diagnoses</label>
+                  <span class="text-[11px] text-slate-400">Primary + Secondary</span>
+                </div>
+                <div class="flex flex-wrap gap-2 mb-2">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-teal-50 text-teal-800 rounded-md font-semibold text-xs border border-teal-200">
+                    <span>I10 — Essential (Primary) Hypertension</span>
+                    <button class="text-teal-600 hover:text-teal-900">&times;</button>
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 text-slate-700 rounded-md text-xs border border-slate-200">
+                    <span>R07.9 — Chest Pain, Unspecified</span>
+                    <button class="text-slate-500 hover:text-slate-800">&times;</button>
+                  </span>
+                </div>
+                <input type="text" placeholder="Type ICD-10 code or diagnosis name to add..." class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:bg-white">
+              </div>
+            </div>
+
+            <!-- Digital e-Prescription Pad -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                  <span class="text-teal-600 font-serif text-base">℞</span>
+                  <span>Prescription & Medication Orders</span>
+                </h3>
+                <button onclick="addPrescriptionRow()" class="px-2.5 py-1 bg-teal-50 hover:bg-teal-100 text-teal-700 font-semibold rounded text-xs">+ Add Medicine</button>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-50 text-slate-500 border-b border-slate-200 text-[11px]">
+                    <tr>
+                      <th class="px-3 py-2">Medicine (Stock)</th>
+                      <th class="px-3 py-2">Dosage</th>
+                      <th class="px-3 py-2">Frequency</th>
+                      <th class="px-3 py-2">Duration</th>
+                      <th class="px-3 py-2">Instructions</th>
+                      <th class="px-2 py-2"></th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100" id="rxTableBody">
+                    <tr>
+                      <td class="px-3 py-2.5 font-semibold text-slate-900">
+                        <div>Paracetamol 500mg (MED-001)</div>
+                        <div class="text-[10px] text-slate-400 font-normal">Analgesic • Stock: 500</div>
+                      </td>
+                      <td class="px-3 py-2.5"><input type="text" value="1 tablet" class="w-20 p-1 bg-slate-50 border border-slate-200 rounded text-xs"></td>
+                      <td class="px-3 py-2.5">
+                        <select class="p-1 bg-slate-50 border border-slate-200 rounded text-xs">
+                          <option>1-0-1 (Twice Daily)</option>
+                          <option>1-1-1 (Thrice Daily)</option>
+                          <option>1-0-0 (Morning)</option>
+                          <option>0-0-1 (Night)</option>
+                        </select>
+                      </td>
+                      <td class="px-3 py-2.5"><input type="text" value="5 Days" class="w-16 p-1 bg-slate-50 border border-slate-200 rounded text-xs"></td>
+                      <td class="px-3 py-2.5"><input type="text" value="After food" class="w-28 p-1 bg-slate-50 border border-slate-200 rounded text-xs"></td>
+                      <td class="px-2 py-2.5 text-right"><button class="text-rose-500 hover:text-rose-700 font-bold">&times;</button></td>
+                    </tr>
+                    <tr>
+                      <td class="px-3 py-2.5 font-semibold text-slate-900">
+                        <div>Amlodipine 5mg (MED-003)</div>
+                        <div class="text-[10px] text-slate-400 font-normal">Antihypertensive • Stock: 250</div>
+                      </td>
+                      <td class="px-3 py-2.5"><input type="text" value="1 tablet" class="w-20 p-1 bg-slate-50 border border-slate-200 rounded text-xs"></td>
+                      <td class="px-3 py-2.5">
+                        <select class="p-1 bg-slate-50 border border-slate-200 rounded text-xs">
+                          <option>0-0-1 (Night)</option>
+                          <option>1-0-0 (Morning)</option>
+                          <option>1-0-1 (Twice Daily)</option>
+                        </select>
+                      </td>
+                      <td class="px-3 py-2.5"><input type="text" value="30 Days" class="w-16 p-1 bg-slate-50 border border-slate-200 rounded text-xs"></td>
+                      <td class="px-3 py-2.5"><input type="text" value="Regular BP monitoring" class="w-28 p-1 bg-slate-50 border border-slate-200 rounded text-xs"></td>
+                      <td class="px-2 py-2.5 text-right"><button class="text-rose-500 hover:text-rose-700 font-bold">&times;</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Lab Orders & Finalization -->
+          <div class="space-y-4">
+            
+            <!-- Order Diagnostics -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-3">
+              <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Order Lab & Diagnostics</h3>
+              <div class="space-y-2">
+                <label class="flex items-center gap-2 text-xs text-slate-700">
+                  <input type="checkbox" checked class="rounded text-teal-600 focus:ring-teal-500">
+                  <span>12-Lead Electrocardiogram (ECG)</span>
+                </label>
+                <label class="flex items-center gap-2 text-xs text-slate-700">
+                  <input type="checkbox" checked class="rounded text-teal-600 focus:ring-teal-500">
+                  <span>Lipid Profile Panel</span>
+                </label>
+                <label class="flex items-center gap-2 text-xs text-slate-700">
+                  <input type="checkbox" class="rounded text-teal-600 focus:ring-teal-500">
+                  <span>Cardiac Enzymes (Troponin-I)</span>
+                </label>
+                <label class="flex items-center gap-2 text-xs text-slate-700">
+                  <input type="checkbox" class="rounded text-teal-600 focus:ring-teal-500">
+                  <span>Serum Creatinine & Electrolytes</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Follow-up & Advice -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-3">
+              <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Follow-Up & Advice</h3>
+              <div>
+                <label class="text-[11px] text-slate-500 font-medium">Follow Up Date</label>
+                <input type="date" value="2026-10-11" class="w-full mt-1 p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs">
+              </div>
+              <div>
+                <label class="text-[11px] text-slate-500 font-medium">Dietary & Lifestyle Advice</label>
+                <textarea rows="2" class="w-full mt-1 p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs" placeholder="Low sodium diet, avoid strenuous lifting...">Low salt diet, avoid sudden physical exertion. Return immediately if pain worsens.</textarea>
+              </div>
+            </div>
+
+            <!-- Finish Consultation Button -->
+            <div class="space-y-2">
+              <button onclick="finalizeConsultation()" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-xs shadow-md shadow-teal-600/20 transition flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                <span>Finalize & Issue Prescription</span>
+              </button>
+              <button onclick="openModal('admissionModal')" class="w-full py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl font-semibold text-xs transition">
+                Admit to Inpatient Bed (IPD)
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- 05. IPD WARDS & VISUAL BED MATRIX -->
+      <!-- ========================================================== -->
+      <section id="screen-ipd" class="hidden space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight">Inpatient Wards & Visual Bed Grid</h1>
+            <p class="text-xs text-slate-500">Live floor-wise bed allocation, patient admissions, and transfer matrix.</p>
+          </div>
+          <button onclick="openModal('admissionModal')" class="flex items-center gap-2 px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold shadow-xs transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>+ New Patient Admission</span>
+          </button>
+        </div>
+
+        <!-- Ward Switcher Tabs & Legend -->
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-2">
+            <button class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-teal-600 text-white">General Ward 1 (Floor 1)</button>
+            <button class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">ICU Ward 1 (Floor 2)</button>
+            <button class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Private Suite 1 (Floor 3)</button>
+          </div>
+
+          <!-- Status Legend -->
+          <div class="flex items-center gap-4 text-xs">
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Available (Green)</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Occupied (Blue)</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Cleaning / Maint (Amber)</span>
+          </div>
+        </div>
+
+        <!-- Bed Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <!-- Bed 1: Available -->
+          <div class="bg-white rounded-xl border-2 border-emerald-500/40 p-4 shadow-xs hover:border-emerald-500 transition relative">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-mono font-bold text-sm text-slate-900">Bed B-101</span>
+              <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-semibold text-[11px]">Available</span>
+            </div>
+            <p class="text-xs text-slate-500">Room 101 • General Ward</p>
+            <div class="mt-3 flex items-baseline justify-between text-xs">
+              <span class="text-slate-400">Daily Charge:</span>
+              <span class="font-bold text-slate-800">$1,000 / day</span>
+            </div>
+            <button onclick="openModal('admissionModal')" class="mt-3 w-full py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold rounded-lg text-xs transition">
+              + Assign Patient
+            </button>
+          </div>
+
+          <!-- Bed 2: Occupied -->
+          <div class="bg-white rounded-xl border-2 border-blue-500/50 p-4 shadow-xs hover:border-blue-600 transition">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-mono font-bold text-sm text-slate-900">Bed B-102</span>
+              <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-semibold text-[11px]">Occupied</span>
+            </div>
+            <div class="text-xs">
+              <div class="font-semibold text-slate-900">Robert Brown</div>
+              <div class="text-[11px] text-slate-500">MRN: PAT-2026-00003</div>
+              <div class="text-[11px] text-slate-500 mt-1">Dr. Robert Brown • Admitted 02 Oct</div>
+            </div>
+            <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
+              <button onclick="alert('Manage Admission: ADM-2026-00001')" class="text-xs font-semibold text-blue-600 hover:text-blue-800">Manage Patient &rarr;</button>
+              <button onclick="alert('Discharge requested')" class="text-[11px] text-rose-600 hover:text-rose-800 font-medium">Discharge</button>
+            </div>
+          </div>
+
+          <!-- Bed 3: Available -->
+          <div class="bg-white rounded-xl border-2 border-emerald-500/40 p-4 shadow-xs hover:border-emerald-500 transition">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-mono font-bold text-sm text-slate-900">Bed B-103</span>
+              <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-semibold text-[11px]">Available</span>
+            </div>
+            <p class="text-xs text-slate-500">Room 102 • General Ward</p>
+            <div class="mt-3 flex items-baseline justify-between text-xs">
+              <span class="text-slate-400">Daily Charge:</span>
+              <span class="font-bold text-slate-800">$1,000 / day</span>
+            </div>
+            <button onclick="openModal('admissionModal')" class="mt-3 w-full py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold rounded-lg text-xs transition">
+              + Assign Patient
+            </button>
+          </div>
+
+          <!-- Bed 4: Maintenance -->
+          <div class="bg-white rounded-xl border-2 border-amber-500/40 p-4 shadow-xs">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-mono font-bold text-sm text-slate-900">Bed B-104</span>
+              <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded font-semibold text-[11px]">Maintenance</span>
+            </div>
+            <p class="text-xs text-slate-500">Sanitation & UV Sterilization</p>
+            <div class="mt-3 text-xs text-amber-700 bg-amber-50 p-2 rounded">
+              Ready in ~45 mins
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- 06. PHARMACY & INVENTORY -->
+      <!-- ========================================================== -->
+      <section id="screen-pharmacy" class="hidden space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight">Pharmacy Formulary & Stock Inventory</h1>
+            <p class="text-xs text-slate-500">Track medication stock quantities, unit prices, expirations, and dispensing.</p>
+          </div>
+          <button onclick="alert('Open Add Medicine Modal')" class="flex items-center gap-2 px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold shadow-xs transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>+ Add Medicine Stock</span>
+          </button>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200 text-[11px] uppercase">
+              <tr>
+                <th class="px-4 py-3">Code</th>
+                <th class="px-4 py-3">Trade Name & Generic</th>
+                <th class="px-4 py-3">Category</th>
+                <th class="px-4 py-3">Unit Price</th>
+                <th class="px-4 py-3">Current Stock</th>
+                <th class="px-4 py-3">Expiry Date</th>
+                <th class="px-4 py-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="hover:bg-slate-50">
+                <td class="px-4 py-3 font-mono font-semibold text-slate-800">MED-001</td>
+                <td class="px-4 py-3">
+                  <div class="font-bold text-slate-900">Paracetamol 500mg</div>
+                  <div class="text-[11px] text-slate-400">Acetaminophen</div>
+                </td>
+                <td class="px-4 py-3"><span class="px-2 py-0.5 bg-slate-100 rounded text-slate-700 font-medium">Analgesic</span></td>
+                <td class="px-4 py-3 font-semibold text-slate-900">$5.00</td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-emerald-600">500 units</span>
+                    <span class="px-1.5 py-0.2 bg-emerald-100 text-emerald-800 rounded text-[10px]">Optimal</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3 text-slate-500">Oct 2028</td>
+                <td class="px-4 py-3 text-right">
+                  <button class="px-2.5 py-1 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded font-semibold text-xs">Dispense</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="px-4 py-3 font-mono font-semibold text-slate-800">MED-002</td>
+                <td class="px-4 py-3">
+                  <div class="font-bold text-slate-900">Amoxicillin 250mg</div>
+                  <div class="text-[11px] text-slate-400">Amoxicillin Trihydrate</div>
+                </td>
+                <td class="px-4 py-3"><span class="px-2 py-0.5 bg-slate-100 rounded text-slate-700 font-medium">Antibiotic</span></td>
+                <td class="px-4 py-3 font-semibold text-slate-900">$12.00</td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-slate-800">300 units</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3 text-slate-500">Oct 2027</td>
+                <td class="px-4 py-3 text-right">
+                  <button class="px-2.5 py-1 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded font-semibold text-xs">Dispense</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-50 bg-rose-50/20">
+                <td class="px-4 py-3 font-mono font-semibold text-slate-800">MED-003</td>
+                <td class="px-4 py-3">
+                  <div class="font-bold text-slate-900">Amlodipine 5mg</div>
+                  <div class="text-[11px] text-slate-400">Amlodipine Besylate</div>
+                </td>
+                <td class="px-4 py-3"><span class="px-2 py-0.5 bg-slate-100 rounded text-slate-700 font-medium">Antihypertensive</span></td>
+                <td class="px-4 py-3 font-semibold text-slate-900">$8.50</td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-rose-600">45 units</span>
+                    <span class="px-1.5 py-0.2 bg-rose-100 text-rose-800 rounded text-[10px] font-bold">Low Stock</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3 text-slate-500">Dec 2026</td>
+                <td class="px-4 py-3 text-right">
+                  <button class="px-2.5 py-1 bg-rose-100 hover:bg-rose-200 text-rose-800 rounded font-semibold text-xs">Restock</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- 07. LABORATORY & DIAGNOSTICS (LIS) -->
+      <!-- ========================================================== -->
+      <section id="screen-laboratory" class="hidden space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight">Laboratory Information System (LIS)</h1>
+            <p class="text-xs text-slate-500">Manage diagnostic orders, sample collection status, and enter lab test results.</p>
+          </div>
+          <button onclick="alert('Order Lab Test Modal')" class="flex items-center gap-2 px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold shadow-xs transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>+ Order New Test</span>
+          </button>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200 text-[11px] uppercase">
+              <tr>
+                <th class="px-4 py-3">Order ID</th>
+                <th class="px-4 py-3">Patient</th>
+                <th class="px-4 py-3">Prescribing Doctor</th>
+                <th class="px-4 py-3">Test Title</th>
+                <th class="px-4 py-3">Date</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="hover:bg-slate-50">
+                <td class="px-4 py-3 font-mono font-semibold text-teal-700">LAB-2026-081</td>
+                <td class="px-4 py-3 font-semibold text-slate-900">John Doe (PAT-2026-00001)</td>
+                <td class="px-4 py-3 text-slate-600">Dr. Alice Smith</td>
+                <td class="px-4 py-3 font-medium">Complete Blood Count (CBC)</td>
+                <td class="px-4 py-3 text-slate-500">Today, 09:10 AM</td>
+                <td class="px-4 py-3"><span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full font-semibold text-[11px]">Sample Collected</span></td>
+                <td class="px-4 py-3 text-right">
+                  <button onclick="alert('Enter CBC Result: Hb 14.2 g/dL, WBC 7,200')" class="px-2.5 py-1 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded font-semibold text-xs">Enter Results</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="px-4 py-3 font-mono font-semibold text-teal-700">LAB-2026-082</td>
+                <td class="px-4 py-3 font-semibold text-slate-900">Jane Smith (PAT-2026-00002)</td>
+                <td class="px-4 py-3 text-slate-600">Dr. Alice Smith</td>
+                <td class="px-4 py-3 font-medium">Lipid Profile & Glucose Fasting</td>
+                <td class="px-4 py-3 text-slate-500">Today, 09:20 AM</td>
+                <td class="px-4 py-3"><span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-full font-semibold text-[11px]">Ordered</span></td>
+                <td class="px-4 py-3 text-right">
+                  <button onclick="alert('Sample Collected')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-semibold text-xs">Collect Sample</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- 08. BILLING & INVOICING -->
+      <!-- ========================================================== -->
+      <section id="screen-billing" class="hidden space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight">Billing, POS Cashier & Invoicing</h1>
+            <p class="text-xs text-slate-500">Manage patient invoices, cash/card/UPI receipts, insurance claims, and outstanding balances.</p>
+          </div>
+          <button onclick="openModal('invoiceModal')" class="flex items-center gap-2 px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold shadow-xs transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>+ Create New Invoice</span>
+          </button>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200 text-[11px] uppercase">
+              <tr>
+                <th class="px-4 py-3">Invoice #</th>
+                <th class="px-4 py-3">Patient</th>
+                <th class="px-4 py-3">Date</th>
+                <th class="px-4 py-3">Subtotal</th>
+                <th class="px-4 py-3">Discount</th>
+                <th class="px-4 py-3">Total Payable</th>
+                <th class="px-4 py-3">Paid Amount</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="hover:bg-slate-50">
+                <td class="px-4 py-3 font-mono font-semibold text-teal-700">INV-2026-00001</td>
+                <td class="px-4 py-3 font-semibold text-slate-900">John Doe</td>
+                <td class="px-4 py-3 text-slate-500">04 Oct 2026</td>
+                <td class="px-4 py-3">$500.00</td>
+                <td class="px-4 py-3">$0.00</td>
+                <td class="px-4 py-3 font-bold text-slate-900">$500.00</td>
+                <td class="px-4 py-3 font-bold text-emerald-600">$500.00</td>
+                <td class="px-4 py-3"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-semibold text-[11px]">Paid</span></td>
+                <td class="px-4 py-3 text-right space-x-1">
+                  <button onclick="viewReceipt('INV-2026-00001', 'John Doe', 500, 'Paid')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-semibold text-xs">Receipt</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="px-4 py-3 font-mono font-semibold text-teal-700">INV-2026-00002</td>
+                <td class="px-4 py-3 font-semibold text-slate-900">Jane Smith</td>
+                <td class="px-4 py-3 text-slate-500">04 Oct 2026</td>
+                <td class="px-4 py-3">$800.00</td>
+                <td class="px-4 py-3 text-emerald-600">-$50.00</td>
+                <td class="px-4 py-3 font-bold text-slate-900">$750.00</td>
+                <td class="px-4 py-3 font-bold text-slate-400">$0.00</td>
+                <td class="px-4 py-3"><span class="px-2 py-0.5 bg-rose-100 text-rose-800 rounded font-semibold text-[11px]">Unpaid</span></td>
+                <td class="px-4 py-3 text-right space-x-1">
+                  <button onclick="openPaymentModal('INV-2026-00002', 750)" class="px-2.5 py-1 bg-teal-600 hover:bg-teal-700 text-white rounded font-semibold text-xs">Collect $750</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- 09. BRANCHES & DOCTOR MASTERS -->
+      <!-- ========================================================== -->
+      <section id="screen-branches" class="hidden space-y-6">
+        
+        <div>
+          <h1 class="text-xl font-bold text-slate-900 tracking-tight">Hospital Branches & Clinical Departments</h1>
+          <p class="text-xs text-slate-500">Manage multiple hospital units, branch codes, contact coordinates, and clinical specialties.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="px-2 py-0.5 bg-teal-100 text-teal-800 font-mono text-[11px] font-bold rounded">JPR-01</span>
+                <h3 class="text-base font-bold text-slate-900 mt-1">Jaipur Main Hospital</h3>
+              </div>
+              <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-xs font-semibold">Active Unit</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">Jaipur Main Road, Jaipur, Rajasthan 302001, India</p>
+            <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs">
+              <div>Phone: <strong class="text-slate-700">0141-111111</strong></div>
+              <div>Departments: <strong class="text-slate-700">8 Units</strong></div>
+              <div>Total Beds: <strong class="text-slate-700">40 Beds</strong></div>
+              <div>Doctors: <strong class="text-slate-700">12 Active</strong></div>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 font-mono text-[11px] font-bold rounded">DEL-01</span>
+                <h3 class="text-base font-bold text-slate-900 mt-1">Delhi Connaught Place Branch</h3>
+              </div>
+              <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-xs font-semibold">Active Unit</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">Inner Circle, Connaught Place, New Delhi 110001, India</p>
+            <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs">
+              <div>Phone: <strong class="text-slate-700">011-222222</strong></div>
+              <div>Departments: <strong class="text-slate-700">6 Units</strong></div>
+              <div>Total Beds: <strong class="text-slate-700">25 Beds</strong></div>
+              <div>Doctors: <strong class="text-slate-700">8 Active</strong></div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- 10. TENANT SETTINGS & RBAC -->
+      <!-- ========================================================== -->
+      <section id="screen-settings" class="hidden space-y-6">
+        
+        <div>
+          <h1 class="text-xl font-bold text-slate-900 tracking-tight">Tenant Settings & Access Control (RBAC)</h1>
+          <p class="text-xs text-slate-500">Organization profile, prefix configurations, multi-tenancy parameters, and system roles.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
+            <h3 class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">Tenant Master Information</h3>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div>
+                <label class="text-slate-500 block mb-1">Tenant Code</label>
+                <input type="text" value="ABC-HC" disabled class="w-full p-2 bg-slate-100 border border-slate-200 rounded font-mono font-bold text-slate-700">
+              </div>
+              <div>
+                <label class="text-slate-500 block mb-1">Multi-Tenancy Mode</label>
+                <input type="text" value="SharedDatabase" disabled class="w-full p-2 bg-slate-100 border border-slate-200 rounded text-slate-700 font-semibold">
+              </div>
+              <div>
+                <label class="text-slate-500 block mb-1">Invoice Number Prefix</label>
+                <input type="text" value="ABC-INV-" class="w-full p-2 bg-white border border-slate-200 rounded font-mono text-slate-800">
+              </div>
+              <div>
+                <label class="text-slate-500 block mb-1">Patient MRN Prefix</label>
+                <input type="text" value="ABC-PAT-" class="w-full p-2 bg-white border border-slate-200 rounded font-mono text-slate-800">
+              </div>
+            </div>
+            <button onclick="alert('Settings saved successfully!')" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold">Save Tenant Preferences</button>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
+            <h3 class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">System Roles & Permission Matrix</h3>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center justify-between p-2 rounded bg-slate-50">
+                <span class="font-bold text-slate-800">HospitalAdmin</span>
+                <span class="text-teal-700 font-semibold">All Privileges (Tenant-scoped)</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded bg-slate-50">
+                <span class="font-bold text-slate-800">Doctor</span>
+                <span class="text-slate-600">Consultations, e-Rx, IPD Vitals, Lab Review</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded bg-slate-50">
+                <span class="font-bold text-slate-800">Nurse</span>
+                <span class="text-slate-600">Bed Management, Vitals Recording, Ward Transfers</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded bg-slate-50">
+                <span class="font-bold text-slate-800">Pharmacist</span>
+                <span class="text-slate-600">Drug Formulary, Stock In/Out, Dispense e-Rx</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded bg-slate-50">
+                <span class="font-bold text-slate-800">Accountant</span>
+                <span class="text-slate-600">Invoice Creation, Payments POS, Billing Reports</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODALS -->
+  <!-- ============================================================== -->
+
+  <!-- FIGMA DESIGN TOKENS & 1-CLICK EXPORT MODAL -->
+  <div id="figmaModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="px-6 py-4 bg-gradient-to-r from-purple-700 to-indigo-700 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 2h4a4 4 0 0 1 4 4v4H8a4 4 0 0 1 0-8zm0 8h8a4 4 0 0 1 0 8H8a4 4 0 0 1 0-8zm0 8h4a4 4 0 1 1-4 4v-4zM16 6a4 4 0 0 1 4 4v4h-4V6z"/></svg>
+          <h2 class="font-bold text-sm">HMS Figma Design System & Tokens Toolkit</h2>
+        </div>
+        <button onclick="closeModal('figmaModal')" class="text-white/80 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+
+      <div class="p-6 space-y-4 overflow-y-auto text-xs">
+        <div>
+          <h3 class="font-bold text-slate-900 text-sm mb-1">1-Click Figma Import Options</h3>
+          <p class="text-slate-500">You can bring this entire prototype directly into Figma as native vector frames and auto-layout layers:</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="p-3 bg-purple-50 rounded-xl border border-purple-200">
+            <h4 class="font-bold text-purple-900">Option A: HTML to Design Plugin</h4>
+            <p class="text-purple-700 text-[11px] mt-1">Open Figma -> Search plugin "html.to.design" -> Paste this prototype's URL or raw HTML -> Click Import!</p>
+          </div>
+          <div class="p-3 bg-indigo-50 rounded-xl border border-indigo-200">
+            <h4 class="font-bold text-indigo-900">Option B: Tokens Studio Plugin</h4>
+            <p class="text-indigo-700 text-[11px] mt-1">Load `figma/figma_tokens.json` directly into Tokens Studio for Figma to get all color, font, and spacing tokens.</p>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-bold text-slate-800">W3C / Tokens Studio JSON Schema</span>
+            <button onclick="copyTokens()" class="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded font-semibold text-xs transition">Copy Tokens JSON</button>
+          </div>
+          <pre id="tokensPre" class="p-3 bg-slate-900 text-teal-300 rounded-xl font-mono text-[11px] overflow-x-auto max-h-48">{
+  "color": {
+    "primary": { "value": "#0D9488", "type": "color" },
+    "primaryHover": { "value": "#0F766E", "type": "color" },
+    "secondary": { "value": "#4F46E5", "type": "color" },
+    "neutral": { "value": "#0F172A", "type": "color" },
+    "success": { "value": "#10B981", "type": "color" },
+    "warning": { "value": "#F59E0B", "type": "color" },
+    "danger": { "value": "#F43F5E", "type": "color" }
+  },
+  "spacing": { "base": "16px", "md": "12px", "sm": "8px" },
+  "borderRadius": { "card": "12px", "button": "8px", "badge": "9999px" }
+}</pre>
+        </div>
+      </div>
+
+      <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <button onclick="closeModal('figmaModal')" class="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg text-xs">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PATIENT REGISTRATION MODAL -->
+  <div id="patientModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="px-6 py-4 bg-teal-600 text-white flex items-center justify-between">
+        <h2 class="font-bold text-sm">Register New Patient (Auto-MRN: PAT-2026-00004)</h2>
+        <button onclick="closeModal('patientModal')" class="text-white/80 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+
+      <form onsubmit="handlePatientSubmit(event)" class="p-6 space-y-4 overflow-y-auto text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-slate-600 block mb-1 font-semibold">First Name *</label>
+            <input type="text" id="pFirstName" required placeholder="e.g. David" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white">
+          </div>
+          <div>
+            <label class="text-slate-600 block mb-1 font-semibold">Last Name *</label>
+            <input type="text" id="pLastName" required placeholder="e.g. Miller" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="text-slate-600 block mb-1 font-semibold">Date of Birth *</label>
+            <input type="date" required value="1995-05-15" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white">
+          </div>
+          <div>
+            <label class="text-slate-600 block mb-1 font-semibold">Gender *</label>
+            <select class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white">
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-600 block mb-1 font-semibold">Blood Group</label>
+            <select class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white">
+              <option>O+</option>
+              <option>A+</option>
+              <option>B+</option>
+              <option>AB+</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-slate-600 block mb-1 font-semibold">Phone Number *</label>
+            <input type="tel" required placeholder="+91 99999 88888" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white">
+          </div>
+          <div>
+            <label class="text-slate-600 block mb-1 font-semibold">Email Address</label>
+            <input type="email" placeholder="patient@example.com" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-slate-600 block mb-1 font-semibold">Residential Address</label>
+          <input type="text" placeholder="House #, Street, City" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white">
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('patientModal')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-bold shadow-xs">Register Patient</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- APPOINTMENT BOOKING MODAL -->
+  <div id="appointmentModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden flex flex-col">
+      <div class="px-6 py-4 bg-teal-600 text-white flex items-center justify-between">
+        <h2 class="font-bold text-sm">Book Doctor Appointment</h2>
+        <button onclick="closeModal('appointmentModal')" class="text-white/80 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+
+      <form onsubmit="handleAppointmentSubmit(event)" class="p-6 space-y-4 text-xs">
+        <div>
+          <label class="text-slate-600 block mb-1 font-semibold">Select Patient *</label>
+          <select class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg">
+            <option>John Doe (PAT-2026-00001)</option>
+            <option>Jane Smith (PAT-2026-00002)</option>
+            <option>Robert Brown (PAT-2026-00003)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-slate-600 block mb-1 font-semibold">Consulting Doctor *</label>
+          <select class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg">
+            <option>Dr. Alice Smith — Cardiology ($500 fee)</option>
+            <option>Dr. Robert Brown — Neurology ($800 fee)</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-slate-600 block mb-1 font-semibold">Appointment Date</label>
+            <input type="date" value="2026-10-04" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg">
+          </div>
+          <div>
+            <label class="text-slate-600 block mb-1 font-semibold">Next Free Slot</label>
+            <input type="text" value="09:30 AM (Token #3)" disabled class="w-full p-2 bg-slate-100 font-bold text-teal-800 border border-slate-200 rounded-lg">
+          </div>
+        </div>
+
+        <div class="p-3 bg-teal-50 rounded-xl border border-teal-100 flex items-center justify-between">
+          <span class="text-teal-800 font-medium">Consultation Fee</span>
+          <span class="text-base font-bold text-teal-900">$500.00</span>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('appointmentModal')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-bold shadow-xs">Confirm & Issue Token</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- PATIENT ADMISSION (IPD) MODAL -->
+  <div id="admissionModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden flex flex-col">
+      <div class="px-6 py-4 bg-indigo-600 text-white flex items-center justify-between">
+        <h2 class="font-bold text-sm">Admit Patient to IPD Ward</h2>
+        <button onclick="closeModal('admissionModal')" class="text-white/80 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+
+      <form onsubmit="handleAdmissionSubmit(event)" class="p-6 space-y-4 text-xs">
+        <div>
+          <label class="text-slate-600 block mb-1 font-semibold">Select Patient *</label>
+          <select class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg">
+            <option>John Doe (PAT-2026-00001)</option>
+            <option>Jane Smith (PAT-2026-00002)</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-slate-600 block mb-1 font-semibold">Attending Doctor *</label>
+            <select class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg">
+              <option>Dr. Alice Smith</option>
+              <option>Dr. Robert Brown</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-600 block mb-1 font-semibold">Allocated Bed *</label>
+            <select class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg font-bold text-teal-800">
+              <option>Bed B-101 (General - $1,000/d)</option>
+              <option>Bed B-103 (General - $1,000/d)</option>
+              <option>ICU-02 (ICU - $5,000/d)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-slate-600 block mb-1 font-semibold">Admission Reason & Initial Notes</label>
+          <textarea rows="2" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg" placeholder="e.g. Unstable angina monitoring..."></textarea>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('admissionModal')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold shadow-xs">Admit & Allocate Bed</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION POPUP -->
+  <div id="toast" class="hidden fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs transition-all">
+    <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+    <span id="toastMsg">Action completed successfully</span>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- JAVASCRIPT CONTROLLERS & INTERACTIONS -->
+  <!-- ============================================================== -->
+  <script>
+    // Tab and Screen Switcher
+    function switchScreen(screenId) {
+      // Hide all screens
+      const screens = ['dashboard', 'patients', 'appointments', 'clinical', 'ipd', 'pharmacy', 'laboratory', 'billing', 'branches', 'settings'];
+      screens.forEach(s => {
+        const el = document.getElementById('screen-' + s);
+        if (el) el.classList.add('hidden');
+        const navEl = document.getElementById('nav-' + s);
+        if (navEl) {
+          navEl.classList.remove('nav-active');
+          navEl.classList.add('text-slate-600');
+        }
+      });
+
+      // Show selected screen
+      const target = document.getElementById('screen-' + screenId);
+      if (target) target.classList.remove('hidden');
+
+      const targetNav = document.getElementById('nav-' + screenId);
+      if (targetNav) {
+        targetNav.classList.add('nav-active');
+        targetNav.classList.remove('text-slate-600');
+      }
+
+      // Scroll top
+      document.getElementById('mainContent').scrollTop = 0;
+    }
+
+    // Modal helpers
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    // Quick Action Menu
+    function toggleQuickMenu() {
+      const el = document.getElementById('quickMenu');
+      el.classList.toggle('hidden');
+    }
+
+    // Toast
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3500);
+    }
+
+    // Tenant switcher
+    function switchTenant(tenantCode) {
+      showToast('Switched context to Tenant: ' + tenantCode);
+    }
+
+    // Form handlers
+    function handlePatientSubmit(e) {
+      e.preventDefault();
+      closeModal('patientModal');
+      showToast('Patient Registered: PAT-2026-00004 with medical records initialized');
+      switchScreen('patients');
+    }
+
+    function handleAppointmentSubmit(e) {
+      e.preventDefault();
+      closeModal('appointmentModal');
+      showToast('Appointment booked! Token #3 issued for Dr. Alice Smith');
+      switchScreen('appointments');
+    }
+
+    function handleAdmissionSubmit(e) {
+      e.preventDefault();
+      closeModal('admissionModal');
+      showToast('Patient admitted to Bed B-101 (ADM-2026-00002)');
+      switchScreen('ipd');
+    }
+
+    function finalizeConsultation() {
+      showToast('Consultation marked completed. e-Prescription & Lab orders transmitted.');
+    }
+
+    function addPrescriptionRow() {
+      const tbody = document.getElementById('rxTableBody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="px-3 py-2.5 font-semibold text-slate-900">
+          <div>Atorvastatin 10mg (MED-004)</div>
+          <div class="text-[10px] text-slate-400 font-normal">Statin • Stock: 180</div>
+        </td>
+        <td class="px-3 py-2.5"><input type="text" value="1 tablet" class="w-20 p-1 bg-slate-50 border border-slate-200 rounded text-xs"></td>
+        <td class="px-3 py-2.5">
+          <select class="p-1 bg-slate-50 border border-slate-200 rounded text-xs">
+            <option>0-0-1 (Night)</option>
+            <option>1-0-0 (Morning)</option>
+          </select>
+        </td>
+        <td class="px-3 py-2.5"><input type="text" value="30 Days" class="w-16 p-1 bg-slate-50 border border-slate-200 rounded text-xs"></td>
+        <td class="px-3 py-2.5"><input type="text" value="After dinner" class="w-28 p-1 bg-slate-50 border border-slate-200 rounded text-xs"></td>
+        <td class="px-2 py-2.5 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:text-rose-700 font-bold">&times;</button></td>
+      `;
+      tbody.appendChild(tr);
+      showToast('Added Atorvastatin 10mg to prescription');
+    }
+
+    function viewEMR(mrn, name) {
+      showToast('Opening 360 EMR Chart for ' + name + ' (' + mrn + ')');
+      switchScreen('clinical');
+    }
+
+    function copyTokens() {
+      const code = document.getElementById('tokensPre').innerText;
+      navigator.clipboard.writeText(code);
+      showToast('Copied Figma Design Tokens to clipboard!');
+    }
+
+    function viewReceipt(invNo, patient, amt, status) {
+      alert('HOSPITAL INVOICE RECEIPT\n--------------------------\nInvoice: ' + invNo + '\nPatient: ' + patient + '\nAmount: $' + amt + '\nStatus: ' + status + '\nFacility: ABC Healthcare Ltd - Jaipur Branch\nThank you for choosing HealthCore.');
+    }
+
+    function openPaymentModal(invNo, amt) {
+      const method = prompt('Collect $' + amt + ' for ' + invNo + '.\nEnter payment method (Cash / Card / UPI / Insurance):', 'Card');
+      if (method) {
+        showToast('Payment of $' + amt + ' recorded successfully via ' + method + '!');
+      }
+    }
+
+    // Close modal on Escape key
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        ['figmaModal', 'patientModal', 'appointmentModal', 'admissionModal'].forEach(closeModal);
+      }
+    });
+  </script>
+</body>
+</html>

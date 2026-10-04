@@ -96,9 +96,10 @@ app.UseMiddleware<TenantResolverMiddleware>();
 app.UseAuthorization();
 
 app.UseHangfireDashboard("/hangfire");
-
+ 
 app.MapControllers();
 
 app.Run();
 
 public partial class Program { }
+

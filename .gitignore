@@ -9,3 +9,8 @@ obj/
 *.sln.docstates
 appsettings.Development.json
 
+## Web / Node.js
+node_modules/
+web/node_modules/
+web/dist/
+.env.local
