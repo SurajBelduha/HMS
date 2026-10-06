@@ -11,6 +11,8 @@ import {
   Building,
   Settings,
   Circle,
+  LogOut,
+  Shield,
 } from 'lucide-react';
 import { useApp, type ScreenType } from '../../context/AppContext';
 
@@ -24,7 +26,8 @@ interface NavItem {
 }
 
 export const Sidebar: React.FC = () => {
-  const { currentScreen, setCurrentScreen } = useApp();
+  const { currentScreen, setCurrentScreen, allowedScreens, currentUser, logoutUser, userRole } =
+    useApp();
 
   const clinicalNav: NavItem[] = [
     {
@@ -94,6 +97,11 @@ export const Sidebar: React.FC = () => {
     },
   ];
 
+  // RBAC: Filter items so only permitted screens are shown to this role
+  const visibleClinical = clinicalNav.filter((item) => allowedScreens.includes(item.id));
+  const visibleServices = servicesNav.filter((item) => allowedScreens.includes(item.id));
+  const visibleAdmin = adminNav.filter((item) => allowedScreens.includes(item.id));
+
   const renderNavGroup = (items: NavItem[]) => {
     return items.map((item) => {
       const isActive = currentScreen === item.id;
@@ -130,40 +138,76 @@ export const Sidebar: React.FC = () => {
 
   return (
     <aside className="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0 select-none">
-      <div className="p-3 overflow-y-auto flex-1">
-        {/* Clinical Operations */}
-        <div className="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-          Clinical & Operations
+      {/* Active Role Indicator */}
+      <div className="p-3 border-b border-slate-100 bg-slate-50/50">
+        <div className="flex items-center justify-between text-xs">
+          <span className="text-slate-500 font-medium flex items-center gap-1.5">
+            <Shield className="w-3.5 h-3.5 text-teal-600" />
+            <span>Assigned Role</span>
+          </span>
+          <span className="font-bold text-teal-800 bg-teal-100 px-2 py-0.5 rounded-full text-[11px]">
+            {userRole}
+          </span>
         </div>
-        <nav className="space-y-0.5 mt-1">{renderNavGroup(clinicalNav)}</nav>
-
-        {/* Hospital Services */}
-        <div className="px-3 pt-4 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-          Hospital Services
-        </div>
-        <nav className="space-y-0.5 mt-1">{renderNavGroup(servicesNav)}</nav>
-
-        {/* Administration */}
-        <div className="px-3 pt-4 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-          Administration
-        </div>
-        <nav className="space-y-0.5 mt-1">{renderNavGroup(adminNav)}</nav>
       </div>
 
-      {/* Footer Info */}
-      <div className="p-4 border-t border-slate-200 bg-slate-50/50">
-        <div className="flex items-center justify-between text-[11px] mb-1.5">
+      <div className="p-3 overflow-y-auto flex-1 space-y-4">
+        {/* Clinical Operations */}
+        {visibleClinical.length > 0 && (
+          <div>
+            <div className="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              Clinical & Operations
+            </div>
+            <nav className="space-y-0.5 mt-1">{renderNavGroup(visibleClinical)}</nav>
+          </div>
+        )}
+
+        {/* Hospital Services */}
+        {visibleServices.length > 0 && (
+          <div>
+            <div className="px-3 pt-2 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              Hospital Services
+            </div>
+            <nav className="space-y-0.5 mt-1">{renderNavGroup(visibleServices)}</nav>
+          </div>
+        )}
+
+        {/* Administration */}
+        {visibleAdmin.length > 0 && (
+          <div>
+            <div className="px-3 pt-2 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              Administration
+            </div>
+            <nav className="space-y-0.5 mt-1">{renderNavGroup(visibleAdmin)}</nav>
+          </div>
+        )}
+      </div>
+
+      {/* Footer Info & Logout */}
+      <div className="p-3 border-t border-slate-200 bg-slate-50/60 space-y-2.5">
+        <div className="flex items-center justify-between text-[11px]">
           <span className="text-slate-500 font-medium">Tenant Isolation</span>
-          <span className="font-mono text-teal-700 bg-teal-100 px-1.5 py-0.5 rounded font-semibold">
+          <span className="font-mono text-teal-700 bg-teal-100 px-1.5 py-0.2 rounded font-semibold">
             Shared DB
           </span>
         </div>
-        <div className="flex items-center justify-between text-[11px]">
-          <span className="text-slate-500">API Health (.NET 8)</span>
-          <span className="flex items-center gap-1 text-emerald-600 font-medium">
-            <Circle className="w-2 h-2 fill-emerald-500 text-emerald-500" /> Online
-          </span>
-        </div>
+
+        {/* User logout action */}
+        {currentUser && (
+          <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
+            <div className="truncate pr-2">
+              <div className="text-xs font-bold text-slate-800 truncate">{currentUser.fullName}</div>
+              <div className="text-[11px] text-slate-400 truncate">{currentUser.email}</div>
+            </div>
+            <button
+              onClick={logoutUser}
+              title="Sign Out"
+              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
     </aside>
   );

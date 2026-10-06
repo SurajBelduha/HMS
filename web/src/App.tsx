@@ -1,6 +1,8 @@
 import React from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { AppLayout } from './components/layout/AppLayout';
+import { LoginScreen } from './features/auth/LoginScreen';
+import { AccessDeniedScreen } from './features/auth/AccessDeniedScreen';
 import { DashboardScreen } from './features/dashboard/DashboardScreen';
 import { PatientListScreen } from './features/patients/PatientListScreen';
 import { PatientRegisterModal } from './features/patients/PatientRegisterModal';
@@ -15,9 +17,15 @@ import { BillingScreen } from './features/billing/BillingScreen';
 import { CreateInvoiceModal } from './features/billing/CreateInvoiceModal';
 import { BranchesScreen } from './features/branches/BranchesScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
+import { isScreenAllowedForRole } from './config/rbac';
 
 const MainScreenRouter: React.FC = () => {
-  const { currentScreen } = useApp();
+  const { currentScreen, userRole } = useApp();
+
+  // Enforce Role-Based Access Control (RBAC)
+  if (!isScreenAllowedForRole(userRole, currentScreen)) {
+    return <AccessDeniedScreen screenName={currentScreen} />;
+  }
 
   switch (currentScreen) {
     case 'dashboard':
@@ -46,6 +54,14 @@ const MainScreenRouter: React.FC = () => {
 };
 
 export const AppContent: React.FC = () => {
+  const { isAuthenticated } = useApp();
+
+  // If unauthenticated, show secure Login Screen
+  if (!isAuthenticated) {
+    return <LoginScreen />;
+  }
+
+  // Once authenticated, render role-protected layout
   return (
     <AppLayout>
       <MainScreenRouter />

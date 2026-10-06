@@ -7,10 +7,11 @@ import {
   Plus,
   Bell,
   ChevronDown,
+  LogOut,
+  Shield,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Button } from '../ui/Button';
-import type { UserRole } from '../../types';
 
 export const Header: React.FC = () => {
   const {
@@ -19,12 +20,24 @@ export const Header: React.FC = () => {
     activeBranch,
     setActiveBranch,
     userRole,
-    setUserRole,
+    currentUser,
+    logoutUser,
+    allowedScreens,
     openModal,
     showToast,
   } = useApp();
 
   const [showQuickMenu, setShowQuickMenu] = useState(false);
+
+  // Derive initials for avatar
+  const initials = currentUser
+    ? currentUser.fullName
+        .split(' ')
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase()
+    : 'U';
 
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
@@ -95,9 +108,9 @@ export const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Actions & Role Selector */}
+        {/* Actions & User Profile */}
         <div className="flex items-center gap-3">
-          {/* Quick Action Button */}
+          {/* Quick Action Button (Filtered by role permissions) */}
           <div className="relative">
             <Button
               variant="primary"
@@ -111,70 +124,59 @@ export const Header: React.FC = () => {
 
             {showQuickMenu && (
               <div className="absolute right-0 mt-1.5 w-52 bg-white border border-slate-200 rounded-xl shadow-xl py-1 text-xs z-50 animate-in fade-in zoom-in-95 duration-150">
-                <button
-                  onClick={() => {
-                    openModal('registerPatient');
-                    setShowQuickMenu(false);
-                  }}
-                  className="w-full text-left px-3.5 py-2.5 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium cursor-pointer"
-                >
-                  <span className="w-2 h-2 rounded-full bg-teal-500" />
-                  <span>Register New Patient</span>
-                </button>
-                <button
-                  onClick={() => {
-                    openModal('bookAppointment');
-                    setShowQuickMenu(false);
-                  }}
-                  className="w-full text-left px-3.5 py-2.5 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium cursor-pointer"
-                >
-                  <span className="w-2 h-2 rounded-full bg-blue-500" />
-                  <span>Book Appointment</span>
-                </button>
-                <button
-                  onClick={() => {
-                    openModal('admitPatient');
-                    setShowQuickMenu(false);
-                  }}
-                  className="w-full text-left px-3.5 py-2.5 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium cursor-pointer"
-                >
-                  <span className="w-2 h-2 rounded-full bg-indigo-500" />
-                  <span>Admit to IPD Bed</span>
-                </button>
-                <button
-                  onClick={() => {
-                    openModal('createInvoice');
-                    setShowQuickMenu(false);
-                  }}
-                  className="w-full text-left px-3.5 py-2.5 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium cursor-pointer"
-                >
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span>Generate Invoice</span>
-                </button>
+                {allowedScreens.includes('patients') && (
+                  <button
+                    onClick={() => {
+                      openModal('registerPatient');
+                      setShowQuickMenu(false);
+                    }}
+                    className="w-full text-left px-3.5 py-2.5 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium cursor-pointer"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-teal-500" />
+                    <span>Register New Patient</span>
+                  </button>
+                )}
+
+                {allowedScreens.includes('appointments') && (
+                  <button
+                    onClick={() => {
+                      openModal('bookAppointment');
+                      setShowQuickMenu(false);
+                    }}
+                    className="w-full text-left px-3.5 py-2.5 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium cursor-pointer"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-blue-500" />
+                    <span>Book Appointment</span>
+                  </button>
+                )}
+
+                {allowedScreens.includes('ipd') && (
+                  <button
+                    onClick={() => {
+                      openModal('admitPatient');
+                      setShowQuickMenu(false);
+                    }}
+                    className="w-full text-left px-3.5 py-2.5 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium cursor-pointer"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-indigo-500" />
+                    <span>Admit to IPD Bed</span>
+                  </button>
+                )}
+
+                {allowedScreens.includes('billing') && (
+                  <button
+                    onClick={() => {
+                      openModal('createInvoice');
+                      setShowQuickMenu(false);
+                    }}
+                    className="w-full text-left px-3.5 py-2.5 hover:bg-slate-50 flex items-center gap-2 text-slate-700 font-medium cursor-pointer"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <span>Generate Invoice</span>
+                  </button>
+                )}
               </div>
             )}
-          </div>
-
-          {/* Role Simulator */}
-          <div className="hidden xl:flex items-center gap-1.5 bg-slate-100 px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs">
-            <span className="text-slate-400">Role:</span>
-            <select
-              value={userRole}
-              onChange={(e) => {
-                setUserRole(e.target.value as UserRole);
-                showToast(`Simulating user role: ${e.target.value}`);
-              }}
-              className="bg-transparent font-medium text-slate-700 focus:outline-hidden cursor-pointer"
-            >
-              <option value="HospitalAdmin">Hospital Admin</option>
-              <option value="Doctor">Doctor (Dr. Alice)</option>
-              <option value="Nurse">Staff Nurse</option>
-              <option value="Receptionist">Receptionist</option>
-              <option value="Pharmacist">Pharmacist</option>
-              <option value="LabTechnician">Lab Technician</option>
-              <option value="Accountant">Accountant</option>
-              <option value="PlatformSuperAdmin">Platform SuperAdmin</option>
-            </select>
           </div>
 
           {/* Notifications */}
@@ -186,17 +188,29 @@ export const Header: React.FC = () => {
             <span className="w-2 h-2 bg-rose-500 rounded-full absolute top-1.5 right-1.5" />
           </button>
 
-          {/* User Profile Pill */}
+          {/* User Profile Pill & Signout */}
           <div className="flex items-center gap-2.5 pl-2 border-l border-slate-200">
             <div className="w-8 h-8 rounded-full bg-teal-100 border border-teal-200 text-teal-800 flex items-center justify-center font-bold text-xs">
-              AS
+              {initials}
             </div>
-            <div className="hidden 2xl:block text-left">
+            <div className="hidden xl:block text-left">
               <div className="text-xs font-semibold text-slate-800 leading-tight">
-                Dr. Alice Smith
+                {currentUser?.fullName || 'Hospital User'}
               </div>
-              <div className="text-[11px] text-slate-400">Cardiology Lead</div>
+              <div className="text-[11px] text-teal-600 font-medium flex items-center gap-1">
+                <Shield className="w-2.5 h-2.5" />
+                <span>{userRole}</span>
+              </div>
             </div>
+
+            {/* Logout button */}
+            <button
+              onClick={logoutUser}
+              title="Sign Out"
+              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer ml-1"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>

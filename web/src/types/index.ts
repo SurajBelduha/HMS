@@ -11,6 +11,18 @@ export type UserRole =
   | 'LabTechnician'
   | 'Accountant';
 
+export interface AuthUser {
+  id: string;
+  email: string;
+  fullName: string;
+  role: UserRole;
+  tenantId: string;
+  tenantName: string;
+  branchId: string;
+  branchName: string;
+  token: string;
+}
+
 export interface Tenant {
   id: string;
   tenantCode: string;
